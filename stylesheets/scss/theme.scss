@@ -1,0 +1,45 @@
+//Up for debate: move these vars to _variables.scss or keep theme here 
+$color-primary: red;
+$color-secondary: blue;
+
+$color-library-primary: orange;
+$color-library-secondary: brown;
+
+
+//Build out placeholders.  Loop through all properties available to theme
+@each $property in background background-color color border-color {
+
+  %theme-#{$property}-primary{
+    #{$property}: $color-primary;
+    .theme-libary & {
+      #{$property}: $color-library-primary;
+    }
+  }
+
+  %theme-#{$property}-secondary{
+    #{$property}: $color-library-secondary;
+    .theme-library & {
+      #{$property}: $color-library-secondary;
+    }
+  }
+}
+
+@mixin theme($property, $variant: primary) {
+  @extend %theme-#{$property}-#{$variant}
+}
+
+
+
+//Usage: 
+.header-navigation {
+  @include theme(background, primary);
+}
+p {
+  @include theme(background, primary);
+}
+li {
+  @include theme(background, primary);
+  @include theme(border-color, secondary);
+}
+
+
