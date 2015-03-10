@@ -1,45 +1,68 @@
 //Up for debate: move these vars to _variables.scss or keep theme here 
-$color-primary: red;
-$color-secondary: blue;
+$color-primary: pink;
+$color-primary-dog: red;
+$color-primary-cat: orange;
+$themes: dog cat;
 
-$color-library-primary: orange;
-$color-library-secondary: brown;
+
+//Helper function  to return the color of a theme
+@function theme-color($theme) {
+  @if ($theme == dog){
+    @return $color-primary-dog;
+  }
+  @elseif ($theme == cat){
+    @return $color-primary-cat;
+  }
+}
 
 
-//Build out placeholders.  Loop through all properties available to theme
+@mixin theme-extend($property) {
+  @extend %theme-#{$property}-default;
+  @each $theme in $themes {
+    .theme-#{$theme} & {
+      @extend %theme-#{$property}-#{$theme};
+    }
+  }
+}
+
+@mixin theme($property){
+  #{$property}: $color-primary;
+  @each $theme in $themes {
+    .theme-#{$theme} & {
+      #{$property}: theme-color($theme);
+    }
+  }
+}
+
+//Build the placeholders that will be used by the extends
 @each $property in background background-color color border-color {
-
-  %theme-#{$property}-primary{
+  %theme-#{$property}-default {
     #{$property}: $color-primary;
-    .theme-libary & {
-      #{$property}: $color-library-primary;
-    }
   }
-
-  %theme-#{$property}-secondary{
-    #{$property}: $color-library-secondary;
-    .theme-library & {
-      #{$property}: $color-library-secondary;
+  @each $theme in $themes {
+    %theme-#{$property}-#{$theme} {
+      #{$property}: theme-color($theme);
     }
   }
 }
-
-@mixin theme($property, $variant: primary) {
-  @extend %theme-#{$property}-#{$variant}
-}
-
 
 
 //Usage: 
 .header-navigation {
-  @include theme(background, primary);
+  @include theme-extend(background);
 }
 p {
-  @include theme(background, primary);
+  @include theme-extend(background);
 }
 li {
-  @include theme(background, primary);
-  @include theme(border-color, secondary);
+  @include theme-extend(background);
+  @include theme-extend(border-color);
+}
+strong {
+  @media screen and (max-width: 100px) {
+    @include theme(background);
+  }
+
 }
 
 
